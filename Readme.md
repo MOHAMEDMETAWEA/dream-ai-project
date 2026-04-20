@@ -70,11 +70,17 @@ dream-ai-project/
 
 > Full instructions with troubleshooting are in `docs/SETUP_INSTRUCTIONS.txt`.
 
-### 1 · Create and activate a virtual environment
+### 1 · Clean and Create a Virtual Environment
+
+> **⚠️ IMPORTANT FOR CLIENTS:** If you received this project as a ZIP file, you **must** delete the existing `venv` folder before doing anything else. Python environments are linked to the specific computer they were created on and moving them breaks it!
 
 **Windows (PowerShell)**
 
 ```powershell
+# Delete the old environment if it exists
+Remove-Item -Recurse -Force venv -ErrorAction SilentlyContinue
+
+# Create and activate a fresh one
 python -m venv venv
 venv\Scripts\activate
 ```
@@ -82,6 +88,10 @@ venv\Scripts\activate
 **macOS / Linux**
 
 ```bash
+# Delete the old environment if it exists
+rm -rf venv
+
+# Create and activate a fresh one
 python3 -m venv venv
 source venv/bin/activate
 ```
@@ -126,7 +136,7 @@ Database tables created/verified.
 
 ### 5 · Open the app
 
-Navigate to **http://127.0.0.1:5000/** in your browser.
+Navigate to **<http://127.0.0.1:5000/>** in your browser.
 
 > ⚠️ **Always use the Flask-served URL** (`http://127.0.0.1:5000/`) rather than opening `index.html` directly. Opening as a file (`file://`) can cause session cookie and API issues.
 

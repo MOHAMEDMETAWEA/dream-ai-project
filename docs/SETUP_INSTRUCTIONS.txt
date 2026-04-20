@@ -14,14 +14,18 @@ Prerequisites
 
 Recommended Setup
 -----------------
-1. Create a virtual environment:
-   python -m venv venv
+If you received this project as a ZIP or downloaded it, you MUST recreate the virtual environment!
 
-2. Activate it on Windows:
-   venv\Scripts\activate
+1. Delete existing environment and make a new one:
+   Windows:  Remove-Item -Recurse -Force venv -ErrorAction SilentlyContinue; python -m venv venv
+   Mac/Linux: rm -rf venv; python3 -m venv venv
+
+2. Activate it:
+   Windows:  venv\Scripts\activate
+   Mac/Linux: source venv/bin/activate
 
 3. Install core project dependencies:
-   pip install -r backend/requirements.txt
+   python -m pip install -r backend/requirements.txt
 
 4. Initialise the database and demo account:
    python database/init_db.py
