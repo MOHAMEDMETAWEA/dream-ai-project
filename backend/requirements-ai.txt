@@ -1,0 +1,12 @@
+# Optional AI/NLP dependencies for richer analysis features.
+# Install these on Python 3.10 or 3.11 for the best compatibility:
+#
+#   pip install -r backend/requirements-ai.txt
+#
+# The app still runs without these packages by using built-in fallbacks.
+
+transformers>=4.36,<5.0
+torch>=2.1
+scikit-learn>=1.3,<2.0
+nltk>=3.8,<4.0
+spacy>=3.7,<4.0

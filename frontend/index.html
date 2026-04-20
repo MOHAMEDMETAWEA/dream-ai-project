@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DreamAI - Understand Your Dreams</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<nav id="navbar" class="navbar hidden">
+    <div class="nav-brand">
+        <span class="nav-title">DreamAI</span>
+    </div>
+    <div class="nav-links">
+        <button class="nav-btn active" onclick="showPage('dashboard')">Dashboard</button>
+        <button class="nav-btn" onclick="showPage('record')">Record Dream</button>
+        <button class="nav-btn" onclick="showPage('history')">My Dreams</button>
+        <button class="nav-btn logout-btn" onclick="logout()">Logout</button>
+    </div>
+    <div class="nav-user">
+        <span id="nav-username"></span>
+    </div>
+</nav>
+
+<div id="page-auth" class="page">
+    <div class="auth-container">
+        <div class="auth-hero">
+            <div class="auth-moon">Sleep. Reflect. Learn.</div>
+            <h1 class="auth-title">DreamAI</h1>
+            <p class="auth-tagline">Understand your dreams.<br>Understand yourself.</p>
+        </div>
+
+        <div class="auth-card">
+            <div class="auth-tabs">
+                <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Login</button>
+                <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Register</button>
+            </div>
+
+            <div id="form-login" class="auth-form">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" placeholder="Your username" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Your password" autocomplete="current-password">
+                </div>
+                <button class="btn-primary btn-full" onclick="doLogin()">Login</button>
+                <p class="auth-hint">New here? Switch to <a href="#" onclick="switchTab('register'); return false;">Register</a>.</p>
+            </div>
+
+            <div id="form-register" class="auth-form hidden">
+                <div class="form-group">
+                    <label for="reg-username">Username</label>
+                    <input type="text" id="reg-username" placeholder="Choose a username" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email (optional)</label>
+                    <input type="email" id="reg-email" placeholder="your@email.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" placeholder="At least 6 characters" autocomplete="new-password">
+                </div>
+                <button class="btn-primary btn-full" onclick="doRegister()">Create Account</button>
+                <p class="auth-disclaimer">
+                    Warning: DreamAI is not a clinical tool. Results are AI-generated and not medical advice.
+                    If you are experiencing mental health difficulties, please seek professional support.
+                </p>
+            </div>
+
+            <div id="auth-error" class="error-msg hidden"></div>
+        </div>
+    </div>
+</div>
+
+<div id="page-dashboard" class="page hidden">
+    <div class="page-content">
+        <div class="page-header page-header-split">
+            <div>
+                <h2>Your Dashboard</h2>
+                <p class="page-sub">An overview of your emotional patterns</p>
+            </div>
+            <button class="btn-secondary" onclick="exportData()">Export My Data</button>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-number" id="stat-total">-</div>
+                <div class="stat-label">Total Dreams</div>
+            </div>
+            <div class="stat-card" id="stat-top-emotion-card">
+                <div class="stat-number" id="stat-top-emotion">-</div>
+                <div class="stat-label">Most Common Emotion (30 days)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stat-patterns">-</div>
+                <div class="stat-label">Recurring Symbols Found</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card chart-card">
+                <h3 class="card-title">Emotions (Last 30 Days)</h3>
+                <canvas id="emotionChart" height="220"></canvas>
+            </div>
+
+            <div class="card chart-card">
+                <h3 class="card-title">Dream Activity (Last 14 Days)</h3>
+                <canvas id="timelineChart" height="220"></canvas>
+            </div>
+
+            <div class="card patterns-card">
+                <h3 class="card-title">Recurring Symbols</h3>
+                <div id="patterns-list" class="patterns-grid">
+                    <p class="empty-msg">Record at least 2 dreams to see recurring patterns.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="disclaimer-box">
+            <strong>Reminder:</strong> Dream analysis results are generated by AI and are for personal
+            reflection only. They are not a substitute for professional psychological advice.
+            If you are struggling, please speak to a counsellor or mental health professional.
+        </div>
+    </div>
+</div>
+
+<div id="page-record" class="page hidden">
+    <div class="page-content">
+        <div class="page-header">
+            <h2>Record a Dream</h2>
+            <p class="page-sub">Describe your dream in as much detail as you remember</p>
+        </div>
+
+        <div class="record-card card">
+            <div class="form-group">
+                <label for="dream-title">Title (optional)</label>
+                <input type="text" id="dream-title" placeholder="e.g. The Endless Corridor">
+            </div>
+
+            <div class="form-group">
+                <div class="label-row">
+                    <label for="dream-text">Dream Description</label>
+                    <span id="char-count" class="char-count">0 / 5000</span>
+                </div>
+                <textarea id="dream-text" rows="8"
+                    placeholder="Describe your dream here... Who was in it? Where were you? What happened? How did it feel?"
+                    oninput="updateCharCount()"></textarea>
+            </div>
+
+            <div id="voice-section" class="voice-section hidden">
+                <div class="voice-controls">
+                    <button id="btn-voice" class="btn-voice" onclick="toggleVoice()">Start Voice Input</button>
+                    <span id="voice-status" class="voice-status"></span>
+                </div>
+                <p class="voice-note">Voice input will append to the text above. Speak clearly in English.</p>
+            </div>
+
+            <div id="voice-unsupported" class="voice-unsupported hidden">
+                <p>Warning: Voice input is not supported in your browser. Please use text input instead.
+                   It works best in Google Chrome.</p>
+            </div>
+
+            <div id="record-error" class="error-msg hidden"></div>
+
+            <div class="record-actions">
+                <button class="btn-primary" id="btn-analyse" onclick="submitDream()">Analyse My Dream</button>
+                <button class="btn-secondary" onclick="clearDreamForm()">Clear</button>
+            </div>
+
+            <p class="submit-disclaimer">
+                Warning: Analysis results are AI-generated for personal reflection only.
+                This is not medical advice.
+            </p>
+        </div>
+
+        <div id="result-panel" class="result-panel card hidden">
+            <h3 class="result-title">Analysis Result</h3>
+            <div class="result-emotion-row">
+                <div id="result-emotion-badge" class="emotion-badge">-</div>
+                <div class="result-confidence">
+                    Confidence: <strong id="result-confidence">-</strong>
+                </div>
+            </div>
+            <div id="result-insight" class="result-insight"></div>
+            <div class="result-actions">
+                <button class="btn-secondary" onclick="showPage('dashboard')">View Dashboard</button>
+                <button class="btn-secondary" onclick="clearDreamForm()">Record Another</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="page-history" class="page hidden">
+    <div class="page-content">
+        <div class="page-header">
+            <h2>My Dreams</h2>
+            <p class="page-sub">All your recorded dream entries</p>
+        </div>
+
+        <div id="dreams-list" class="dreams-list">
+            <p class="empty-msg">No dreams recorded yet. Go to Record Dream to start.</p>
+        </div>
+    </div>
+</div>
+
+<div id="modal-overlay" class="modal-overlay hidden" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closeModal()">x</button>
+        <h3 id="modal-title" class="modal-dream-title"></h3>
+        <div class="modal-meta">
+            <span id="modal-date"></span>
+            <span id="modal-emotion-badge" class="emotion-badge sm"></span>
+            <span id="modal-confidence" class="modal-confidence"></span>
+        </div>
+        <div id="modal-content" class="modal-content"></div>
+        <div class="modal-keywords">
+            <h4>Detected Keywords</h4>
+            <div id="modal-keywords-list" class="patterns-grid">
+                <p class="empty-msg">No keywords available.</p>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-danger" id="btn-delete-dream" onclick="deleteDream()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<div id="loading-overlay" class="loading-overlay hidden">
+    <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p id="loading-text">Analysing your dream...</p>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

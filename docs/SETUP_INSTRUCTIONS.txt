@@ -1,0 +1,88 @@
+DreamAI Setup Instructions
+==========================
+
+Overview
+--------
+This guide explains how to install, run, and test the DreamAI project.
+
+Prerequisites
+-------------
+- Python 3.10, 3.11, or 3.14 for the core app
+- pip
+- A modern browser
+- Internet access for first-time dependency and model downloads
+
+Recommended Setup
+-----------------
+1. Create a virtual environment:
+   python -m venv venv
+
+2. Activate it on Windows:
+   venv\Scripts\activate
+
+3. Install core project dependencies:
+   pip install -r backend/requirements.txt
+
+4. Initialise the database and demo account:
+   python database/init_db.py
+
+5. Start the backend:
+   python backend/app.py
+
+6. Open the application:
+   http://127.0.0.1:5000/
+
+Demo Login
+----------
+- username: demo
+- password: demo123
+
+Optional AI Model Setup
+-----------------------
+For the richer transformer and NLP stack, install:
+pip install -r backend/requirements-ai.txt
+
+This is best done on Python 3.10 or 3.11.
+
+To enable the transformer classifier for a run:
+set DREAMAI_ENABLE_TRANSFORMER=1
+python backend/app.py
+
+Without that flag, the project uses the fast built-in fallback so the app stays responsive on first run.
+
+Optional extra downloads:
+- python -m spacy download en_core_web_sm
+- python -c "import nltk; nltk.download('stopwords')"
+
+Testing
+-------
+Run the backend tests with:
+python backend/test_backend.py
+
+Expected behaviour
+------------------
+- Users can register and log in.
+- Dreams can be recorded by text input.
+- Voice input works in supported browsers.
+- Dashboard charts load after dreams are stored.
+- Recurring symbols appear after at least two dreams.
+- Dream data can be exported from the dashboard.
+
+Troubleshooting
+---------------
+- If Flask is missing:
+  pip install -r backend/requirements.txt
+
+- If the database is missing:
+  python database/init_db.py
+
+- If port 5000 is busy:
+  update the port in backend/app.py and use the same port in the browser
+
+- If voice input does not work:
+  use Google Chrome and open the app through http://127.0.0.1:5000/
+
+Important note
+--------------
+Open the frontend through Flask for the most reliable login/session behaviour.
+Directly opening the HTML file is not the recommended submission/demo workflow.
